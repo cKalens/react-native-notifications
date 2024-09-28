@@ -15,6 +15,7 @@ import com.wix.reactnativenotifications.core.AppLifecycleFacade;
 import com.wix.reactnativenotifications.core.AppLifecycleFacadeHolder;
 import com.wix.reactnativenotifications.core.InitialNotificationHolder;
 import com.wix.reactnativenotifications.core.NotificationIntentAdapter;
+import com.wix.reactnativenotifications.core.ReactAppLifecycleFacade;
 import com.wix.reactnativenotifications.core.notification.IPushNotification;
 import com.wix.reactnativenotifications.core.notification.PushNotification;
 import com.wix.reactnativenotifications.core.notificationdrawer.IPushNotificationsDrawer;
@@ -66,7 +67,12 @@ public class RNNotificationsPackage implements ReactPackage, AppLifecycleFacade.
 
     @Override
     public void onActivityStarted(Activity activity) {
-        if (InitialNotificationHolder.getInstance().get() == null) {
+        boolean isReactInitialized = false;
+        if (AppLifecycleFacadeHolder.get() instanceof ReactAppLifecycleFacade) {
+            isReactInitialized = AppLifecycleFacadeHolder.get().isReactInitialized();
+        }
+
+        if (InitialNotificationHolder.getInstance().get() == null && !isReactInitialized) {
             callOnOpenedIfNeed(activity);
         }
     }

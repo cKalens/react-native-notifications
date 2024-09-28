@@ -63,7 +63,7 @@ public class RNNotificationsModule extends ReactContextBaseJavaModule implements
     @Override
     public void onNewIntent(Intent intent) {
         if (NotificationIntentAdapter.canHandleIntent(intent)) {
-            Bundle notificationData = intent.getExtras();
+            Bundle notificationData = NotificationIntentAdapter.extractPendingNotificationDataFromIntent(intent);
             final IPushNotification notification = PushNotification.get(getReactApplicationContext().getApplicationContext(), notificationData);
             if (notification != null) {
                 notification.onOpened();
@@ -113,9 +113,9 @@ public class RNNotificationsModule extends ReactContextBaseJavaModule implements
 
     @ReactMethod
     public void setCategories(ReadableArray categories) {
-    
+
     }
-    
+
     public void cancelDeliveredNotification(String tag, int notificationId) {
         IPushNotificationsDrawer notificationsDrawer = PushNotificationsDrawer.get(getReactApplicationContext().getApplicationContext());
         notificationsDrawer.onNotificationClearRequest(tag, notificationId);

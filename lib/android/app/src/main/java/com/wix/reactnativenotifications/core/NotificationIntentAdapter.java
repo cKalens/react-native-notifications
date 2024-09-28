@@ -14,17 +14,9 @@ public class NotificationIntentAdapter {
 
     @SuppressLint("UnspecifiedImmutableFlag")
     public static PendingIntent createPendingNotificationIntent(Context appContext, PushNotificationProps notification) {
-        if (canHandleTrampolineActivity(appContext)) {
-            Intent intent = new Intent(appContext, ProxyService.class);
-            intent.putExtra(PUSH_NOTIFICATION_EXTRA_NAME, notification.asBundle());
-            return PendingIntent.getService(appContext, (int) System.currentTimeMillis(), intent, PendingIntent.FLAG_ONE_SHOT);
-        } else {
-            Intent mainActivityIntent = appContext.getPackageManager().getLaunchIntentForPackage(appContext.getPackageName());
-            mainActivityIntent.putExtra(PUSH_NOTIFICATION_EXTRA_NAME, notification.asBundle());
-            TaskStackBuilder taskStackBuilder = TaskStackBuilder.create(appContext);
-            taskStackBuilder.addNextIntentWithParentStack(mainActivityIntent);
-            return taskStackBuilder.getPendingIntent((int) System.currentTimeMillis(), PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE);
-        }
+        Intent intent = appContext.getPackageManager().getLaunchIntentForPackage(appContext.getPackageName());
+        intent.putExtra(PUSH_NOTIFICATION_EXTRA_NAME, notification.asBundle());
+        return PendingIntent.getActivity(appContext, (int) System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE);
     }
 
     public static boolean canHandleTrampolineActivity(Context appContext) {
